@@ -1,0 +1,48 @@
+{
+  "name": "amma-file-upload",
+  "version": "0.0.1",
+  "description": "amma file upload",
+  "main": "index.js",
+  "author": "Prashanth Pratapagiri <prashanth.p@outlook.com>",
+  "license": "MIT",
+  "keywords": [
+    "hapi",
+    "node",
+    "amma",
+    "amma-file-upload"
+  ],
+  "typescript": {
+    "definition": "amma-file-upload.d.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/prashanthjs/amma-file-upload.git"
+  },
+  "bugs": {
+    "url": "https://github.com/prashanthjs/amma-file-upload/issues"
+  },
+  "scripts": {
+    "test": "lab -t 100 -v -C"
+  },
+  "dependencies": {
+    "amma-plugin-loader": "git://git@github.com:prashanthjs/amma-plugin-loader.git",
+    "async": "^1.4.2",
+    "boom": "^2.9.0",
+    "fs": "0.0.2",
+    "fs-extra": "^0.24.0",
+    "gm": "^1.20.0",
+    "hapi": "^10.4.1",
+    "mime": "^1.3.4",
+    "mkdirp": "^0.5.1",
+    "node-uuid": "^1.4.3"
+  },
+  "devDependencies": {
+    "code": "^1.4.1",
+    "gulp": "^3.8.11",
+    "gulp-lab": "^1.0.5",
+    "gulp-nodemon": "^2.0.3",
+    "lab": "^5.8.0",
+    "sinon": "^1.15.4",
+    "tsd": "^0.6.3"
+  }
+}
