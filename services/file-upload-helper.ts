@@ -1,4 +1,4 @@
-import AmmaFileUpload = require('file-upload');
+import AmmaFileUpload = require('./file-upload');
 import Path = require('path');
 import Async = require('async');
 import Fs = require('fs');

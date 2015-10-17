@@ -10,5 +10,5 @@ let config: Plugin.IConfig = {
     pkg: pkg
   },
 };
-let plugin = new PluginLoader(config);
+let plugin: Plugin.IPluginLoader = new PluginLoader(config);
 export = plugin;
