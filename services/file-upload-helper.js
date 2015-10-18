@@ -1,26 +1,40 @@
 var Path = require('path');
 var Async = require('async');
+var Fs = require('fs');
 var FileUploadHelper = (function () {
     function FileUploadHelper(fileUploader, options) {
         this.fileUploader = fileUploader;
         this.options = options;
     }
-    FileUploadHelper.prototype.getImages = function (extPath, callback) {
+    FileUploadHelper.prototype.getFilesWithToken = function (extPath, callback) {
         var token = this.fileUploader.createToken();
         if (extPath) {
             this.syncSrcToTemp(token, extPath, function (error, results) {
-                callback(error, {
+                return callback(error, {
                     token: token,
                     files: results.files
                 });
             });
         }
         else {
-            callback(null, {
+            return callback(null, {
                 token: token,
                 files: {}
             });
         }
+    };
+    FileUploadHelper.prototype.getFiles = function (extPath, callback) {
+        var srcDir = this.getSrcDirWithExt(extPath);
+        var files = this.getValidFiles(srcDir);
+        var result = {
+            main: files
+        };
+        var thumbails = this.options.thumbnails;
+        for (var i = 0; i < thumbails.length; i++) {
+            var name_1 = thumbails[i].name;
+            result[name_1] = this.getValidFiles(Path.join(srcDir, name_1));
+        }
+        callback(null, result);
     };
     FileUploadHelper.prototype.upload = function (token, file, fileName, callback) {
         var tempDir = this.getTempDirWithToken(token);
@@ -50,7 +64,6 @@ var FileUploadHelper = (function () {
     FileUploadHelper.prototype.removeFile = function (token, fileName, callback) {
         var tempDir = this.getTempDirWithToken(token);
         var path = Path.join(tempDir, fileName);
-        console.log(path);
         this.fileUploader.removeFile(path, callback);
     };
     FileUploadHelper.prototype.syncSrcToTemp = function (token, extPath, callback) {
@@ -85,6 +98,18 @@ var FileUploadHelper = (function () {
             return false;
         }
         return true;
+    };
+    FileUploadHelper.prototype.getValidFiles = function (dir) {
+        var files = this.fileUploader.getFiles(dir);
+        var result = [];
+        for (var i = 0; i < files.length; i++) {
+            var filePath = Path.join(dir, files[i]);
+            var isFile = Fs.lstatSync(filePath).isFile();
+            if (isFile && this.isValid(files[i])) {
+                result.push(files[i]);
+            }
+        }
+        return result;
     };
     return FileUploadHelper;
 })();

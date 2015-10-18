@@ -35,7 +35,15 @@ suite('Test File upload', function () {
         fileUploadHelper = FileUploaderFactory.get(options);
         return next();
     });
-    test('test get images', function (next) {
+    test('test get only files', function (next) {
+        var sinon = Sinon.spy(function (error, result) {
+            expect(error).to.be.null();
+            expect(sinon.called).to.be.true();
+            next();
+        });
+        fileUploadHelper.getFiles(ext, sinon);
+    });
+    test('test get files with token', function (next) {
         var sinon = Sinon.spy(function (error, result) {
             expect(error).to.be.null();
             token = result.token;
@@ -43,7 +51,7 @@ suite('Test File upload', function () {
             expect(sinon.called).to.be.true();
             next();
         });
-        fileUploadHelper.getImages(ext, sinon);
+        fileUploadHelper.getFilesWithToken(ext, sinon);
     });
     test('test syncTempToSrc', function (next) {
         var sinon = Sinon.spy(function (error, result) {

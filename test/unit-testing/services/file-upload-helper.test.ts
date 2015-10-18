@@ -45,7 +45,16 @@ suite('Test File upload', () => {
     fileUploadHelper = FileUploaderFactory.get(options);
     return next();
   });
-  test('test get images', (next) => {
+  test('test get only files', (next) => {
+    let sinon = Sinon.spy((error, result) => {
+      expect(error).to.be.null();
+      expect(sinon.called).to.be.true();
+      next();
+    });
+    fileUploadHelper.getFiles(ext, sinon);
+  });
+
+  test('test get files with token', (next) => {
     let sinon = Sinon.spy((error, result) => {
       expect(error).to.be.null();
       token = result.token;
@@ -53,8 +62,10 @@ suite('Test File upload', () => {
       expect(sinon.called).to.be.true();
       next();
     });
-    fileUploadHelper.getImages(ext, sinon);
+    fileUploadHelper.getFilesWithToken(ext, sinon);
   });
+
+
 
   test('test syncTempToSrc', (next) => {
     let sinon = Sinon.spy((error, result) => {

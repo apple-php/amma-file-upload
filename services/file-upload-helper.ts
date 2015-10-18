@@ -19,23 +19,39 @@ export class FileUploadHelper {
 
   }
 
-  getImages(extPath: string, callback: ICallback): void {
+  getFilesWithToken(extPath: string, callback: ICallback): void {
     let token = this.fileUploader.createToken();
     if (extPath) {
       this.syncSrcToTemp(token, extPath, (error, results) => {
-        callback(error, {
+        return callback(error, {
           token: token,
           files: results.files
         });
       });
     }
     else {
-      callback(null, {
+      return callback(null, {
         token: token,
         files: {}
       });
     }
+
   }
+
+  getFiles(extPath: string, callback: ICallback): void {
+    let srcDir = this.getSrcDirWithExt(extPath);
+    let files = this.getValidFiles(srcDir);
+    let result = {
+      main: files
+    };
+    let thumbails = this.options.thumbnails;
+    for (let i = 0; i < thumbails.length; i++) {
+      let name = thumbails[i].name;
+      result[name] = this.getValidFiles(Path.join(srcDir, name));
+    }
+    callback(null, result);
+  }
+
 
   upload(token: string, file: Fs.ReadStream, fileName: string, callback: ICallback): void {
     let tempDir = this.getTempDirWithToken(token);
@@ -65,7 +81,6 @@ export class FileUploadHelper {
   removeFile(token, fileName, callback: ICallback) {
     let tempDir = this.getTempDirWithToken(token);
     let path = Path.join(tempDir, fileName);
-    console.log(path);
     this.fileUploader.removeFile(path, callback);
   }
 
@@ -104,6 +119,19 @@ export class FileUploadHelper {
       return false;
     }
     return true;
+  }
+
+  protected getValidFiles(dir) {
+    let files = this.fileUploader.getFiles(dir);
+    let result = [];
+    for (let i = 0; i < files.length; i++) {
+      let filePath = Path.join(dir, files[i]);
+      let isFile = Fs.lstatSync(filePath).isFile();
+      if (isFile && this.isValid(files[i])) {
+        result.push(files[i]);
+      }
+    }
+    return result;
   }
 
 }

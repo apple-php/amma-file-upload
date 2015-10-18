@@ -56,7 +56,8 @@ declare module 'amma-file-upload/services/file-upload-helper' {
 	    fileUploader: AmmaFileUpload.IFileUploader;
 	    options: Ioptions;
 	    constructor(fileUploader: AmmaFileUpload.IFileUploader, options: Ioptions);
-	    getImages(extPath: string, callback: ICallback): void;
+	    getFilesWithToken(extPath: string, callback: ICallback): void;
+	    getFiles(extPath: string, callback: ICallback): void;
 	    upload(token: string, file: Fs.ReadStream, fileName: string, callback: ICallback): void;
 	    syncTempToSrc(token: string, extPath: string, callback: ICallback): void;
 	    removeFile(token: any, fileName: any, callback: ICallback): void;
@@ -65,6 +66,7 @@ declare module 'amma-file-upload/services/file-upload-helper' {
 	    protected getSrcDirWithExt(ext: string): string;
 	    protected getTempDirWithToken(token: string): string;
 	    protected isValid(fileName: any): boolean;
+	    protected getValidFiles(dir: any): any[];
 	}
 	export default class FileUploaderFactory {
 	    _server: Hapi.Server;
