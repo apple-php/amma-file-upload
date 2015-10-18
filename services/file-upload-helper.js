@@ -7,12 +7,20 @@ var FileUploadHelper = (function () {
     }
     FileUploadHelper.prototype.getImages = function (extPath, callback) {
         var token = this.fileUploader.createToken();
-        this.syncSrcToTemp(token, extPath, function (error, results) {
-            callback(error, {
-                token: token,
-                files: results.files
+        if (extPath) {
+            this.syncSrcToTemp(token, extPath, function (error, results) {
+                callback(error, {
+                    token: token,
+                    files: results.files
+                });
             });
-        });
+        }
+        else {
+            callback(null, {
+                token: token,
+                files: {}
+            });
+        }
     };
     FileUploadHelper.prototype.upload = function (token, file, fileName, callback) {
         var tempDir = this.getTempDirWithToken(token);

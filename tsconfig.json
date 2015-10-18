@@ -16,6 +16,7 @@
         "typings/**/*.ts"
     ],
     "files": [
+        "amma-file-upload.d.ts",
         "index.ts",
         "services/file-upload-helper.ts",
         "services/file-upload.ts",

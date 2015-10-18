@@ -21,12 +21,20 @@ export class FileUploadHelper {
 
   getImages(extPath: string, callback: ICallback): void {
     let token = this.fileUploader.createToken();
-    this.syncSrcToTemp(token, extPath, (error, results) => {
-      callback(error, {
-        token: token,
-        files: results.files
+    if (extPath) {
+      this.syncSrcToTemp(token, extPath, (error, results) => {
+        callback(error, {
+          token: token,
+          files: results.files
+        });
       });
-    });
+    }
+    else {
+      callback(null, {
+        token: token,
+        files: {}
+      });
+    }
   }
 
   upload(token: string, file: Fs.ReadStream, fileName: string, callback: ICallback): void {
