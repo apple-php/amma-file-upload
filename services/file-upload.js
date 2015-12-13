@@ -118,7 +118,17 @@ var FileUploader = (function () {
         }
     };
     FileUploader.prototype.getFiles = function (path) {
-        return Fs.readdirSync(path);
+        var files = Fs.readdirSync(path);
+        var temp = [];
+        if (files && files.length) {
+            for (var i = 0; i < files.length; i++) {
+                var file = files[i];
+                if (this.checkFileExists(Path.join(path, file))) {
+                    temp.push(file);
+                }
+            }
+        }
+        return temp;
     };
     return FileUploader;
 })();

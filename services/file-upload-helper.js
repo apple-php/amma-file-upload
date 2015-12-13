@@ -6,22 +6,27 @@ var FileUploadHelper = (function () {
         this.fileUploader = fileUploader;
         this.options = options;
     }
-    FileUploadHelper.prototype.getFilesWithToken = function (extPath, callback) {
+    FileUploadHelper.prototype.createToken = function (extPath, callback) {
+        var _this = this;
         var token = this.fileUploader.createToken();
         if (extPath) {
             this.syncSrcToTemp(token, extPath, function (error, results) {
                 return callback(error, {
                     token: token,
-                    files: results.files
+                    files: _this.getFilesByToken(token)
                 });
             });
         }
         else {
             return callback(null, {
                 token: token,
-                files: {}
+                files: []
             });
         }
+    };
+    FileUploadHelper.prototype.getFilesByToken = function (token) {
+        var tempDir = this.getTempDirWithToken(token);
+        return this.fileUploader.getFiles(tempDir);
     };
     FileUploadHelper.prototype.getFiles = function (extPath, callback) {
         var srcDir = this.getSrcDirWithExt(extPath);

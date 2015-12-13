@@ -56,6 +56,8 @@ declare module 'amma-file-upload/services/file-upload-helper' {
 	    fileUploader: AmmaFileUpload.IFileUploader;
 	    options: Ioptions;
 	    constructor(fileUploader: AmmaFileUpload.IFileUploader, options: Ioptions);
+		createToken(extPath: string, callback: ICallback): void;
+		getFilesByToken(token: string): string[];
 	    getFilesWithToken(extPath: string, callback: ICallback): void;
 	    getFiles(extPath: string, callback: ICallback): void;
 	    upload(token: string, file: Fs.ReadStream, fileName: string, callback: ICallback): void;
