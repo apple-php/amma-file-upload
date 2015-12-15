@@ -42,19 +42,10 @@ suite('Test File upload', () => {
       }]
     };
     ext = '1';
-    fileUploadHelper = FileUploaderFactory.get(options);
+    fileUploadHelper = FileUploaderFactory.getInstance(options);
     return next();
   });
-  test('test get only files', (next) => {
-    let sinon = Sinon.spy((error, result) => {
-      expect(error).to.be.null();
-      expect(sinon.called).to.be.true();
-      next();
-    });
-    fileUploadHelper.getFiles(ext, sinon);
-  });
-
-  test('test get files with token', (next) => {
+  test('test create token', (next) => {
     let sinon = Sinon.spy((error, result) => {
       expect(error).to.be.null();
       token = result.token;
@@ -62,7 +53,7 @@ suite('Test File upload', () => {
       expect(sinon.called).to.be.true();
       next();
     });
-    fileUploadHelper.getFilesWithToken(ext, sinon);
+    fileUploadHelper.createToken(ext, sinon);
   });
 
 
@@ -108,20 +99,20 @@ suite('Test File upload', () => {
   });
 
   test('test validation empty', (next) => {
-    let result = fileUploadHelper.isValid('test2.txt');
+    let result = fileUploadHelper._isValid('test2.txt');
     expect(result).to.be.true();
     next();
   });
   test('test validation success', (next) => {
     options.validExtensions = ['.txt'];
-    let result = fileUploadHelper.isValid('test2.txt');
+    let result = fileUploadHelper._isValid('test2.txt');
     expect(result).to.be.true();
     next();
   });
 
   test('test validation failure', (next) => {
     options.validExtensions = ['.png'];
-    let result = fileUploadHelper.isValid('test2.txt');
+    let result = fileUploadHelper._isValid('test2.txt');
     expect(result).to.be.false();
     next();
   });

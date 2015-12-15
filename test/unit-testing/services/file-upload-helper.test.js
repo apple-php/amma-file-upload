@@ -32,18 +32,10 @@ suite('Test File upload', function () {
                 }]
         };
         ext = '1';
-        fileUploadHelper = FileUploaderFactory.get(options);
+        fileUploadHelper = FileUploaderFactory.getInstance(options);
         return next();
     });
-    test('test get only files', function (next) {
-        var sinon = Sinon.spy(function (error, result) {
-            expect(error).to.be.null();
-            expect(sinon.called).to.be.true();
-            next();
-        });
-        fileUploadHelper.getFiles(ext, sinon);
-    });
-    test('test get files with token', function (next) {
+    test('test create token', function (next) {
         var sinon = Sinon.spy(function (error, result) {
             expect(error).to.be.null();
             token = result.token;
@@ -51,7 +43,7 @@ suite('Test File upload', function () {
             expect(sinon.called).to.be.true();
             next();
         });
-        fileUploadHelper.getFilesWithToken(ext, sinon);
+        fileUploadHelper.createToken(ext, sinon);
     });
     test('test syncTempToSrc', function (next) {
         var sinon = Sinon.spy(function (error, result) {
@@ -91,19 +83,19 @@ suite('Test File upload', function () {
         fileUploadHelper.removeFile(token, 'test2.txt', sinon);
     });
     test('test validation empty', function (next) {
-        var result = fileUploadHelper.isValid('test2.txt');
+        var result = fileUploadHelper._isValid('test2.txt');
         expect(result).to.be.true();
         next();
     });
     test('test validation success', function (next) {
         options.validExtensions = ['.txt'];
-        var result = fileUploadHelper.isValid('test2.txt');
+        var result = fileUploadHelper._isValid('test2.txt');
         expect(result).to.be.true();
         next();
     });
     test('test validation failure', function (next) {
         options.validExtensions = ['.png'];
-        var result = fileUploadHelper.isValid('test2.txt');
+        var result = fileUploadHelper._isValid('test2.txt');
         expect(result).to.be.false();
         next();
     });

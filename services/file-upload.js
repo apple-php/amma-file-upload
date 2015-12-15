@@ -9,42 +9,70 @@ var Uuid = require('node-uuid');
 var FileUploader = (function () {
     function FileUploader() {
     }
+    /**
+     *
+     * @returns {string}
+     */
     FileUploader.prototype.createToken = function () {
         return Uuid.v1();
     };
+    /**
+     *
+     * @param file
+     * @param fileName
+     * @param pathToUpload
+     * @param callback
+     * @returns {Fs.ReadStream}
+     */
     FileUploader.prototype.upload = function (file, fileName, pathToUpload, callback) {
         Mkdirp.sync(pathToUpload);
         var path = this.getUniqueFileName(Path.join(pathToUpload, fileName));
         var fileStream = Fs.createWriteStream(path);
         fileStream.on('error', function (err) {
-            return callback(err);
+            callback(err);
         });
         file.pipe(fileStream);
         file.on('end', function (err) {
             var ret = {
                 filename: Path.parse(path).base
             };
-            return callback(null, ret);
+            callback(null, ret);
         });
         return file;
     };
+    /**
+     *
+     * @param srcDir
+     * @param targetDir
+     * @param callback
+     */
     FileUploader.prototype.syncFiles = function (srcDir, targetDir, callback) {
         FsExtra.removeSync(targetDir);
         Mkdirp.sync(srcDir);
         Mkdirp.sync(targetDir);
         FsExtra.copySync(srcDir, targetDir);
         var files = this.getFiles(targetDir);
-        return callback(null, {
+        callback(null, {
             'files': files
         });
     };
+    /**
+     *
+     * @param path
+     * @param callback
+     */
     FileUploader.prototype.removeFile = function (path, callback) {
         return FsExtra.remove(path, callback);
     };
+    /**
+     *
+     * @param path
+     * @param thumbnails
+     * @param callback
+     */
     FileUploader.prototype.createThumbnails = function (path, thumbnails, callback) {
         var _this = this;
         var files = this.getFiles(path);
-        var array = {};
         return Async.eachSeries(files, function (f, _callback) {
             var file = Path.join(path, f);
             if (_this.isImage(file)) {
@@ -61,30 +89,43 @@ var FileUploader = (function () {
             return callback(err);
         });
     };
+    /**
+     *
+     * @param file
+     * @param targetPath
+     * @param thumbnail
+     * @param callback
+     */
     FileUploader.prototype.createThumbnail = function (file, targetPath, thumbnail, callback) {
         if (!this.checkFileExists(file)) {
-            return callback('file doesnot exist');
+            callback('file does not exist');
         }
-        if (!this.isImage(file)) {
-            return callback('file is not a image');
+        else if (!this.isImage(file)) {
+            callback('file is not a image');
         }
-        var name = thumbnail.name;
-        var width = thumbnail.width;
-        var height = thumbnail.height;
-        var dest = Path.join(targetPath, name);
-        var filename = Path.parse(file).base;
-        var thumbnailPath = Path.join(dest, filename);
-        Mkdirp.sync(dest);
-        if (this.checkFileExists(thumbnailPath)) {
-            return callback();
+        else {
+            var name_1 = thumbnail.name;
+            var width = thumbnail.width;
+            var height = thumbnail.height;
+            var dest = Path.join(targetPath, name_1);
+            var filename = Path.parse(file).base;
+            var thumbnailPath = Path.join(dest, filename);
+            Mkdirp.sync(dest);
+            if (this.checkFileExists(thumbnailPath)) {
+                callback();
+            }
+            else {
+                Gm(file).resize(width, height).noProfile().write(thumbnailPath, function (err) {
+                    callback(err);
+                });
+            }
         }
-        return Gm(file)
-            .resize(width, height)
-            .noProfile()
-            .write(thumbnailPath, function (err) {
-            return callback(err);
-        });
     };
+    /**
+     *
+     * @param file
+     * @returns {string}
+     */
     FileUploader.prototype.getUniqueFileName = function (file) {
         var parseData = Path.parse(file);
         var dir = parseData.dir;
@@ -100,6 +141,11 @@ var FileUploader = (function () {
         }
         return file;
     };
+    /**
+     *
+     * @param file
+     * @returns {boolean}
+     */
     FileUploader.prototype.isImage = function (file) {
         var mime = Mime.lookup(file);
         var regex = new RegExp('image/\\S+');
@@ -108,6 +154,11 @@ var FileUploader = (function () {
         }
         return false;
     };
+    /**
+     *
+     * @param file
+     * @returns {boolean}
+     */
     FileUploader.prototype.checkFileExists = function (file) {
         try {
             var stats = Fs.statSync(file);
@@ -117,6 +168,11 @@ var FileUploader = (function () {
             return false;
         }
     };
+    /**
+     *
+     * @param path
+     * @returns {Array}
+     */
     FileUploader.prototype.getFiles = function (path) {
         var files = Fs.readdirSync(path);
         var temp = [];

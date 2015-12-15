@@ -110,7 +110,7 @@ suite('Test File upload', function () {
         test('no file', function (next) {
             file = mockFilesDir + '/temp/test1.txt';
             var sinon = Sinon.spy(function (error) {
-                expect(error).to.be.equal('file doesnot exist');
+                expect(error).to.be.equal('file does not exist');
                 expect(sinon.called).to.be.true();
                 next();
             });
